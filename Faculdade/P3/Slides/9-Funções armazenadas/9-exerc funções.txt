@@ -1,0 +1,142 @@
+-- Exercícios Funções Armazenadas
+
+Do $$ 
+Declare qtd_atual produto.quantest%type;
+Begin
+  select quantest into qtd_atual from produto
+  where codprod = 1;
+  if qtd_atual > 30 then
+     update produto
+      set status = 'Estoque dentro do esperado'
+      where codprod = 1;
+  else
+    update produto
+      set status = 'Estoque fora do limite minimo'
+      where codprod = 1;
+  end if;
+End$$;
+
+-- Questão 1
+select * from produto; 
+
+Create or replace function atualizaStatus (cod produto.codprod%type)
+Returns void
+As $$ 
+Declare qtd_atual produto.quantest%type;
+Begin
+  select quantest into strict qtd_atual from produto
+  where codprod = cod;
+  if qtd_atual > 30 then
+     update produto
+      set status = 'Estoque dentro do esperado'
+      where codprod = cod;
+  else
+    update produto
+      set status = 'Estoque fora do limite minimo'
+      where codprod =  cod;
+  end if;
+End;
+$$ LANGUAGE 'plpgsql';
+
+select * from produto order by codprod; 
+-- delete from produto where codprod > 10; 
+update produto set status = null where codprod = 8; 
+update produto
+set quantest = 5
+where codprod = 7; 
+
+select atualizaStatus(7);
+
+-- Questão 2
+
+create or replace function getSumSalario() 
+returns numeric
+as $$ 
+  Declare
+       salcomp numeric;
+       v record;
+  Begin
+      Salcomp = 0;
+      for v in (select salariofixo from vendedor where salariofixo is not null)   
+        loop
+        salcomp = salcomp + v.salariofixo;
+    end loop;
+    return salcomp;
+end;
+ $$ LANGUAGE 'plpgsql';
+select getSumsalario();
+
+-- versão 2
+create or replace function getSumSalario2() 
+returns numeric
+as $$ 
+  Declare
+       salcomp numeric;
+Begin
+    select sum(salariofixo) into Salcomp from vendedor 
+	where salariofixo is not null;
+    return salcomp;
+end;
+ $$ LANGUAGE 'plpgsql';
+
+create or replace function getSumSalario3() 
+returns numeric
+as $$ 
+  Declare
+       salcomp numeric;
+Begin
+    return (select sum(salariofixo) from vendedor where salariofixo is not null);
+end;
+ $$ LANGUAGE 'plpgsql';
+
+select getSumsalario2();
+select getSumsalario3();
+
+-- Questão 3 - Fornecedor
+-- drop table fornecedor; 
+create table fornecedor(
+cod serial, 
+nome varchar(30),CNPJ varchar(15),email varchar(15), 
+constraint pkcod primary key(cod)); 
+
+select * from fornecedor; 
+-- truncate table fornecedor; 
+
+-- drop function inserefornecedor; 
+
+create or replace function insereFornecedor(nome IN fornecedor.nome%type,
+                                           cnpj1 IN fornecedor.cnpj%type,
+                                           email1 IN fornecedor.email%type) 
+ Returns void
+ As $$ 
+ begin
+  insert into fornecedor values (default,nome,cnpj1,email1);
+ END;
+ $$ LANGUAGE plpgsql;
+
+select insereFornecedor('Fabrica3','1234567890','xxx@gmail.com'); 
+ select * from fornecedor; 
+
+-- Questão 4
+
+create or replace function showFornecedor()
+returns integer
+ As $$ 
+ declare
+   vfornecedor Cursor for select cod, nome,email from fornecedor;
+   df varchar(50); 
+begin
+  for vf in vfornecedor loop
+    df = vf.cod|| '--' || vf.nome || '--' || vf.email;
+    raise notice 'Dados do Fornecedor: %',df;
+  end loop;
+return 1; 
+END;
+$$ LANGUAGE plpgsql;
+
+select showFornecedor(); 
+select * from fornecedor;
+
+
+
+

@@ -1,0 +1,64 @@
+---------------
+-- Criar coleção com esquema de validação:
+---------------
+
+db.createCollection("estudantes", {
+validator: {
+$jsonSchema: {
+bsonType: "object",
+required: [ "name", "year", "major", "address" ],
+properties: {
+name: {
+bsonType: "string",
+description: "must be a string and is required" },
+year: {
+bsonType: "int",
+minimum: 2017, maximum: 3017,
+description: "must be an integer in [ 2017, 3017 ] and is required"
+},
+address: {
+bsonType: "object",
+required: [ "city" ],
+properties: {
+street: { bsonType: "string", description: "must be a string "
+},
+city: { bsonType: "string", description: "must be a string " } } } } } } })
+
+---------------
+-- Acrescentar Validação em uma coleção já existente:
+---------------
+
+db.runCommand({collMod: "estudante",
+validator: {
+$jsonSchema: {
+bsonType: "object",
+required: [ "name", "year", "major", "address" ],
+properties: {
+name: {
+bsonType: "string",
+description: "must be a string and is required" },
+year: {
+bsonType: "int",
+minimum: 2017, maximum: 3017,
+description: "must be an integer in [ 2017, 3017 ] and is required"
+},
+address: {
+bsonType: "object",
+required: [ "city" ],
+properties: {
+street: { bsonType: "string", description: "must be a string "
+},
+city: { bsonType: "string", description: "must be a string " } } } } } } })
+
+---------------
+-- Alterar configurações de Validação de uma coleção já existente:
+---------------
+
+db.runCommand({collMod: "estudante",
+validationLevel:"off",
+validationAction:"warn"})
+
+->>>>
+Level: off, moderate, strict (default)
+Action: warning, error (default)
+->>>>
