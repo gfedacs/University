@@ -9,14 +9,17 @@ async function getOnePokemonStatus() {
     return pokemon.species.name;
   }
   
-let a = getPokemonName()
+  let main = async function () {
+    const pokemonName = await getPokemonName();
+    console.log(pokemonName.length); // Corrected 'length'
 
-
-console.log("chegou aqui")
-console.log(a)
-
-
-
-
+    if (pokemonName.length > 0) {
+       console.log("Not Empty");
+    } else {
+       console.log("Empty");
+    }
+      }
+  
+main()
 
 

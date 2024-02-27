@@ -14,9 +14,3 @@ let a = getPokemonName()
 
 console.log("chegou aqui")
 console.log(a)
-
-
-
-
-
-
