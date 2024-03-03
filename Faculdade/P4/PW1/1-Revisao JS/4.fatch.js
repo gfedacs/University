@@ -6,11 +6,10 @@ async function getOnePokemonStatus(numero) {
 
 let array = []
 
-for (let i = 1; i < 10; i++) {
+for (let i = 1; i < 30; i++) {
     let a = await getOnePokemonStatus(i)
     array.push(a.name,a.base_experience,a.height,a.weight)
 }
-
 
 
 console.log(array)
